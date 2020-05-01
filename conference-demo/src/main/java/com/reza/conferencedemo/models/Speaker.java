@@ -1,15 +1,18 @@
 package com.reza.conferencedemo.models;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity(name="speakers")
+@Entity(name = "speakers")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Speaker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long speaker_id;
+
     private String first_name;
     private String last_name;
     private String title;
@@ -20,14 +23,12 @@ public class Speaker {
     @Type(type="org.hibernate.type.BinaryType")
     private byte[] speaker_photo;
 
-    @ManyToMany
-    @JoinTable(
-            name = "session_speaker",
-            joinColumns = @JoinColumn(name = "speaker_id"),
-            inverseJoinColumns = @JoinColumn(name = "session_id")
-    )
+    @ManyToMany(mappedBy = "speakers")
+    @JsonIgnore
     private List<Session> sessions;
-    private Speaker(){}
+
+    public Speaker() {
+    }
 
     public byte[] getSpeaker_photo() {
         return speaker_photo;
